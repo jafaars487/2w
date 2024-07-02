@@ -13,7 +13,7 @@ jobs:
     - name: Set up MSVC
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Install OpenXLSX dependencies
+    - name: Install dependencies
       run: |
         choco install cmake -y
         choco install ninja -y
@@ -26,13 +26,12 @@ jobs:
         cd build
         cmake -G Ninja ..
         cmake --build . --config Release
-        cd ../..
 
     - name: Build project
       run: |
         mkdir build
         cd build
-        cmake -G Ninja ..
+        cmake -G Ninja -DOpenXLSX_DIR=../OpenXLSX/build ..
         cmake --build . --config Release
 
     - name: Archive build
