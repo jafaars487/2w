@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   build:
-
     runs-on: windows-latest
 
     steps:
@@ -14,13 +13,18 @@ jobs:
     - name: Set up MSVC
       uses: ilammy/msvc-dev-cmd@v1
 
-    - name: Install OpenXLSX
+    - name: Install OpenXLSX dependencies
       run: |
+        choco install cmake -y
+        choco install ninja -y
         git clone https://github.com/troldal/OpenXLSX.git
+
+    - name: Build OpenXLSX
+      run: |
         cd OpenXLSX
         mkdir build
         cd build
-        cmake .. -A x64
+        cmake -G Ninja ..
         cmake --build . --config Release
         cd ../..
 
@@ -28,7 +32,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -A x64 -DOpenXLSX_DIR=../OpenXLSX/build
+        cmake -G Ninja ..
         cmake --build . --config Release
 
     - name: Archive build
