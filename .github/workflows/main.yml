@@ -1,0 +1,38 @@
+name: Build and Release EXE
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Install OpenXLSX
+      run: |
+        git clone https://github.com/troldal/OpenXLSX.git
+        cd OpenXLSX
+        mkdir build
+        cd build
+        cmake .. -A x64
+        cmake --build . --config Release
+        cd ../..
+
+    - name: Build project
+      run: |
+        mkdir build
+        cd build
+        cmake .. -A x64 -DOpenXLSX_DIR=../OpenXLSX/build
+        cmake --build . --config Release
+
+    - name: Archive build
+      uses: actions/upload-artifact@v2
+      with:
+        name: add_record_exe
+        path: build/Release/add_record.exe
